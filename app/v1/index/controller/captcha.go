@@ -6,6 +6,8 @@ import (
 	"github.com/tobycroft/Calc"
 	"main.go/common/BaseController"
 	"main.go/config/app_conf"
+	"main.go/tuuz/Base64"
+	"main.go/tuuz/Input"
 	"main.go/tuuz/RET"
 )
 
@@ -25,6 +27,27 @@ func captcha_get(c *gin.Context) {
 	}
 	RET.Success(c, 0, map[string]interface{}{
 		"ident": oid,
-		"img":   img,
+		"img":   Base64.EncodePng(img),
 	}, nil)
+}
+
+func captcha_check(c *gin.Context) {
+	var captcha AossGoSdk.Captcha
+	captcha.Token = app_conf.Project
+	ident, ok := Input.Post("ident", c, false)
+	if !ok {
+		return
+	}
+	code, ok := Input.Post("code", c, false)
+	if !ok {
+		return
+	}
+
+	err := captcha.CheckInTime(ident, code, 600)
+	if err != nil {
+		RET.Fail(c, 500, nil, err)
+		return
+	} else {
+		RET.Success(c, 0, nil, "验证成功")
+	}
 }

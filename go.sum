@@ -134,6 +134,8 @@ github.com/tobycroft/AossGoSdk v1.18.2 h1:xXQ8nuukkM9dDuSYGJTkvhXS+ge7WZmemIx1mv
 github.com/tobycroft/AossGoSdk v1.18.2/go.mod h1:LJM9VXL5Hprlw64WD78n751QZCDh08mYsXe/RrRSiD8=
 github.com/tobycroft/AossGoSdk v1.19.0 h1:oHdAgwuHjCPRm5bhlM+mNg2jirgMs58NWis5Pp5E5VE=
 github.com/tobycroft/AossGoSdk v1.19.0/go.mod h1:LJM9VXL5Hprlw64WD78n751QZCDh08mYsXe/RrRSiD8=
+github.com/tobycroft/AossGoSdk v1.20.0 h1:fB/nvf9u3wPgLpCR+ERsg594BG3gPNKcREXs4YnAyec=
+github.com/tobycroft/AossGoSdk v1.20.0/go.mod h1:LJM9VXL5Hprlw64WD78n751QZCDh08mYsXe/RrRSiD8=
 github.com/tobycroft/Calc v1.3.5 h1:b/xn6Bizt6pgC3mMiKgIpfQLLQE3SQMfxPN0j7fdjak=
 github.com/tobycroft/Calc v1.3.5/go.mod h1:Rtbth5rVSBICUCh2tH0tQwB1x2SHzhtkyB1FndlETEA=
 github.com/tobycroft/TuuzNet v1.7.2 h1:/9j3If382DA1L5sH9/N0N4zTezo92mKq3idfTqHQSLE=
