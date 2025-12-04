@@ -13,6 +13,7 @@ func CaptchaController(route *gin.RouterGroup) {
 
 func captcha_get(c *gin.Context) {
 	var captcha AossGoSdk.Captcha
+	captcha.Token = "ps"
 	oid := Calc.GenerateOrderId()
 	img, err := captcha.Math(oid)
 	if err != nil {
