@@ -10,5 +10,5 @@ func UserRouter(route *gin.RouterGroup) {
 		context.String(0, route.BasePath())
 	})
 
-	controller.LoginController(route.Group("user"))
+	controller.LoginController(route.Group("login"))
 }
