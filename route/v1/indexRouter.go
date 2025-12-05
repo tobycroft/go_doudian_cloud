@@ -12,5 +12,4 @@ func IndexRouter(route *gin.RouterGroup) {
 
 	controller.IndexController(route.Group("index"))
 	controller.LoginController(route.Group("login"))
-	controller.CaptchaController(route.Group("captcha"))
 }

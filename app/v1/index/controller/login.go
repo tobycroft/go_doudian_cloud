@@ -58,7 +58,7 @@ func login_login(c *gin.Context) {
 	if !ok {
 		return
 	}
-	mail, ok := Input.Post("mail", c, false)
+	mail, ok := Input.Post("mail", c, true)
 	if !ok {
 		return
 	}
