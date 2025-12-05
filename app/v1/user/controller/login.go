@@ -49,19 +49,19 @@ func login_auto(c *gin.Context) {
 	if !ok {
 		return
 	}
-	//ident, ok := Input.Post("ident", c, false)
-	//if !ok {
-	//	return
-	//}
-	//code, ok := Input.Post("code", c, false)
-	//if !ok {
-	//	return
-	//}
-	//err := captcha.CheckInTime(ident, code, 500)
-	//if err != nil {
-	//	RET.Fail(c, 500, nil, err)
-	//	return
-	//}
+	ident, ok := Input.Post("ident", c, false)
+	if !ok {
+		return
+	}
+	code, ok := Input.Post("code", c, false)
+	if !ok {
+		return
+	}
+	err := captcha.CheckInTime(ident, code, 500)
+	if err != nil {
+		RET.Fail(c, 500, nil, err)
+		return
+	}
 	if dataMail, err := UserModel.Api_findByEmail(mail); err != nil {
 		RET.Fail(c, 500, nil, err)
 		return
