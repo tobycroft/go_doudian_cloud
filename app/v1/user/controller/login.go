@@ -69,9 +69,13 @@ func login_auto(c *gin.Context) {
 		RET.Fail(c, 401, nil, "邮箱已被注册，你可以申请找回或重设密码")
 		return
 	}
-	if err := UserModel.Api_insert(username, mail, password); err != nil {
+	if id, err := UserModel.Api_insert(username, mail, password); err != nil {
 		RET.Fail(c, 500, nil, err)
 	} else {
-		RET.Success(c, 0, nil, "注册成功")
+		token := Calc.GenerateToken()
+		RET.Success(c, 0, map[string]any{
+			"token": token,
+			"id":    id,
+		}, "注册成功")
 	}
 }
