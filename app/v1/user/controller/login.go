@@ -50,15 +50,15 @@ func login_auto(c *gin.Context) {
 		RET.Fail(c, 500, nil, err)
 		return
 	}
-	username, ok := Input.Post("username", c, false)
+	username, ok := Input.PostLength("username", 1, 16, c, true)
 	if !ok {
 		return
 	}
-	password, ok := Input.Post("password", c, false)
+	password, ok := Input.PostLength("password", 6, 16, c, false)
 	if !ok {
 		return
 	}
-	mail, ok := Input.Post("mail", c, true)
+	mail, ok := Input.PostLength("mail", 6, 16, c, true)
 	if !ok {
 		return
 	}
