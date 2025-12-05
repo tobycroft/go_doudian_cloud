@@ -16,7 +16,7 @@ func LoginController(route *gin.RouterGroup) {
 	route.Use(cors.Default())
 
 	route.Any("captcha", login_captcha)
-	route.Any("login", login_login)
+	route.Any("auto", login_auto)
 }
 
 func login_captcha(c *gin.Context) {
@@ -34,7 +34,7 @@ func login_captcha(c *gin.Context) {
 	}, nil)
 }
 
-func login_login(c *gin.Context) {
+func login_auto(c *gin.Context) {
 	var captcha AossGoSdk.Captcha
 	captcha.Token = app_conf.Project
 	ident, ok := Input.Post("ident", c, false)
@@ -62,7 +62,13 @@ func login_login(c *gin.Context) {
 	if !ok {
 		return
 	}
-
+	if dataMail, err := UserModel.Api_findByEmail(mail); err != nil {
+		RET.Fail(c, 500, nil, err)
+		return
+	} else if dataMail != nil {
+		RET.Fail(c, 401, nil, "邮箱已被注册")
+		return
+	}
 	if err := UserModel.Api_insert(username, mail, password); err != nil {
 		RET.Fail(c, 500, nil, err)
 	} else {
