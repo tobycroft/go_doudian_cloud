@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tobycroft/AossGoSdk"
 	"github.com/tobycroft/Calc"
-	"main.go/app/v1/index/model/UserModel"
+	"main.go/app/v1/user/model/UserModel"
 	"main.go/config/app_conf"
 	"main.go/tuuz/Base64"
 	"main.go/tuuz/Input"
