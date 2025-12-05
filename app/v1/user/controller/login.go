@@ -37,19 +37,6 @@ func login_captcha(c *gin.Context) {
 func login_auto(c *gin.Context) {
 	var captcha AossGoSdk.Captcha
 	captcha.Token = app_conf.Project
-	ident, ok := Input.Post("ident", c, false)
-	if !ok {
-		return
-	}
-	code, ok := Input.Post("code", c, false)
-	if !ok {
-		return
-	}
-	err := captcha.CheckInTime(ident, code, 500)
-	if err != nil {
-		RET.Fail(c, 500, nil, err)
-		return
-	}
 	username, ok := Input.PostLength("username", 1, 16, c, true)
 	if !ok {
 		return
@@ -62,11 +49,24 @@ func login_auto(c *gin.Context) {
 	if !ok {
 		return
 	}
+	//ident, ok := Input.Post("ident", c, false)
+	//if !ok {
+	//	return
+	//}
+	//code, ok := Input.Post("code", c, false)
+	//if !ok {
+	//	return
+	//}
+	//err := captcha.CheckInTime(ident, code, 500)
+	//if err != nil {
+	//	RET.Fail(c, 500, nil, err)
+	//	return
+	//}
 	if dataMail, err := UserModel.Api_findByEmail(mail); err != nil {
 		RET.Fail(c, 500, nil, err)
 		return
 	} else if dataMail != nil {
-		RET.Fail(c, 401, nil, "邮箱已被注册")
+		RET.Fail(c, 401, nil, "邮箱已被注册，你可以申请找回或重设密码")
 		return
 	}
 	if err := UserModel.Api_insert(username, mail, password); err != nil {
