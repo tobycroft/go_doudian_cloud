@@ -1,12 +1,13 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"image/png"
+	"github.com/tobycroft/AossGoSdk"
+	"github.com/tobycroft/Calc"
+	"main.go/app/v1/index/model/UserModel"
+	"main.go/config/app_conf"
 	"main.go/tuuz/Base64"
-	"main.go/tuuz/Captcha"
 	"main.go/tuuz/Input"
 	"main.go/tuuz/RET"
 )
@@ -14,47 +15,56 @@ import (
 func LoginController(route *gin.RouterGroup) {
 	route.Use(cors.Default())
 
-	route.Any("get_captcha", get_captcha)
-	route.Any("get_captcha_64", get_captcha_64)
-	route.Any("verify_captcha", verify_captcha)
+	route.Any("captcha", login_captcha)
 }
 
-func get_captcha(c *gin.Context) {
-	ident, is := c.GetPostForm("ident")
-	if is == false {
-		c.String(400, "Ident")
-		c.Abort()
+func login_captcha(c *gin.Context) {
+	var captcha AossGoSdk.Captcha
+	captcha.Token = app_conf.Project
+	oid := Calc.GenerateOrderId()
+	img, err := captcha.Math(oid)
+	if err != nil {
+		RET.Fail(c, 500, nil, err)
 		return
 	}
-	img, string := Captcha.ManualCreate(4, ident)
-	fmt.Println(string)
-	png.Encode(c.Writer, img)
+	RET.Success(c, 0, map[string]interface{}{
+		"ident": oid,
+		"img":   Base64.EncodePng(img),
+	}, nil)
 }
 
-func get_captcha_64(c *gin.Context) {
-	img, ident := Captcha.AutoCreate()
-	fmt.Println(ident)
-	b64 := Base64.EncodePng(img)
-	ret := make(map[string]string)
-	ret["ident"] = ident
-	ret["b64"] = b64
-	RET.Fail(c, 400, ret, nil)
-}
-
-func verify_captcha(c *gin.Context) {
-	ident, is := c.GetPostForm("ident")
-	if is == false {
-		RET.Fail(c, 400, nil, "ident")
-		return
-	}
-	verify, ok := Input.Post("verify", c, false)
+func login_login(c *gin.Context) {
+	var captcha AossGoSdk.Captcha
+	captcha.Token = app_conf.Project
+	ident, ok := Input.Post("ident", c, false)
 	if !ok {
 		return
 	}
-	bol := Captcha.AutoVerify(ident, verify)
-	if bol == true {
-		RET.Success(c, 0, nil, "验证成功")
+	code, ok := Input.Post("code", c, false)
+	if !ok {
+		return
+	}
+	err := captcha.CheckInTime(ident, code, 500)
+	if err != nil {
+		RET.Fail(c, 500, nil, err)
+		return
+	}
+	username, ok := Input.Post("username", c, false)
+	if !ok {
+		return
+	}
+	password, ok := Input.Post("password", c, false)
+	if !ok {
+		return
+	}
+	mail, ok := Input.Post("mail", c, false)
+	if !ok {
+		return
+	}
+
+	if err := UserModel.Api_insert(username, mail, password); err != nil {
+		RET.Fail(c, 500, nil, err)
 	} else {
-		RET.Fail(c, 400, nil, "验证失败")
+		RET.Success(c, 0, nil, "注册成功")
 	}
 }
