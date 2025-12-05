@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tobycroft/AossGoSdk"
 	"github.com/tobycroft/Calc"
+	"main.go/app/v1/user/model/TokenModel"
 	"main.go/app/v1/user/model/UserModel"
 	"main.go/config/app_conf"
 	"main.go/tuuz/Base64"
@@ -75,6 +76,11 @@ func login_auto(c *gin.Context) {
 		RET.Fail(c, 500, nil, err)
 	} else {
 		token := Calc.GenerateToken()
+		err = TokenModel.Api_insert(id, token, "default")
+		if err != nil {
+			RET.Fail(c, 500, nil, err)
+			return
+		}
 		RET.Success(c, 0, map[string]any{
 			"token": token,
 			"id":    id,
