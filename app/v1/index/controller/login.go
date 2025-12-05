@@ -16,6 +16,7 @@ func LoginController(route *gin.RouterGroup) {
 	route.Use(cors.Default())
 
 	route.Any("captcha", login_captcha)
+	route.Any("login", login_login)
 }
 
 func login_captcha(c *gin.Context) {
