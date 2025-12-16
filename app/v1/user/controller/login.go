@@ -38,10 +38,6 @@ func login_captcha(c *gin.Context) {
 func login_auto(c *gin.Context) {
 	var captcha AossGoSdk.Captcha
 	captcha.Token = app_conf.Project
-	username, ok := Input.PostLength("username", 1, 16, c, true)
-	if !ok {
-		return
-	}
 	password, ok := Input.PostLength("password", 6, 16, c, false)
 	if !ok {
 		return
@@ -72,7 +68,7 @@ func login_auto(c *gin.Context) {
 		RET.Fail(c, 401, nil, "邮箱已被注册，你可以申请找回或重设密码")
 		return
 	}
-	if id, err := UserModel.Api_insert(username, mail, password); err != nil {
+	if id, err := UserModel.Api_insert(mail, mail, password); err != nil {
 		RET.Fail(c, 500, nil, err)
 	} else {
 		token := Calc.GenerateToken()
