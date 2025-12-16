@@ -76,6 +76,7 @@ func login_auto(c *gin.Context) {
 			return
 		}
 	} else {
+		id = Calc.Any2Int64(dataUser["id"])
 		if dataUser["password"] != passmd5 {
 			RET.Fail(c, 400, nil, "密码错误，账号已被注册，你可以通过对应的邮箱再次找回")
 			return
