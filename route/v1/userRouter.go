@@ -11,4 +11,5 @@ func UserRouter(route *gin.RouterGroup) {
 	})
 
 	controller.LoginController(route.Group("login"))
+	controller.InfoController(route.Group("info"))
 }

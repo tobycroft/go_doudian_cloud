@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/tobycroft/AossGoSdk"
 	"github.com/tobycroft/Calc"
 	"main.go/app/v1/user/model/UserModel"
+	"main.go/common/BaseController"
 	"main.go/common/BaseModel/TokenModel"
 	"main.go/config/app_conf"
 	"main.go/tuuz/Base64"
@@ -14,7 +14,7 @@ import (
 )
 
 func LoginController(route *gin.RouterGroup) {
-	route.Use(cors.Default())
+	route.Use(BaseController.CommonController())
 
 	route.Any("captcha", login_captcha)
 	route.Any("auto", login_auto)
@@ -80,7 +80,7 @@ func login_auto(c *gin.Context) {
 		}
 		RET.Success(c, 0, map[string]any{
 			"token": token,
-			"id":    id,
+			"uid":   id,
 		}, "注册成功")
 	}
 }
