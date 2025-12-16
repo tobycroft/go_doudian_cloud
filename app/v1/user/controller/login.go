@@ -38,14 +38,15 @@ func login_captcha(c *gin.Context) {
 func login_auto(c *gin.Context) {
 	var captcha AossGoSdk.Captcha
 	captcha.Token = app_conf.Project
-	password, ok := Input.PostLength("password", 6, 16, c, false)
-	if !ok {
-		return
-	}
 	mail, ok := Input.PostLength("mail", 6, 16, c, true)
 	if !ok {
 		return
 	}
+	password, ok := Input.PostLength("password", 6, 16, c, false)
+	if !ok {
+		return
+	}
+
 	if !app_conf.TestMode {
 		ident, ok := Input.Post("ident", c, false)
 		if !ok {
