@@ -46,7 +46,7 @@ func login_auto(c *gin.Context) {
 	if !ok {
 		return
 	}
-
+	passmd5 := Calc.Md5(password)
 	if !app_conf.TestMode {
 		ident, ok := Input.Post("ident", c, false)
 		if !ok {
@@ -62,25 +62,32 @@ func login_auto(c *gin.Context) {
 			return
 		}
 	}
-	if dataMail, err := UserModel.Api_findByEmail(mail); err != nil {
+	dataUser, err := UserModel.Api_findByEmail(mail)
+	if err != nil {
 		RET.Fail(c, 500, nil, err)
-		return
-	} else if dataMail != nil {
-		RET.Fail(c, 401, nil, "邮箱已被注册，你可以申请找回或重设密码")
 		return
 	}
-	if id, err := UserModel.Api_insert(mail, mail, password); err != nil {
-		RET.Fail(c, 500, nil, err)
-	} else {
-		token := Calc.GenerateToken()
-		err = TokenModel.Api_insert(id, token, "default")
+	token := Calc.GenerateToken()
+	id := int64(0)
+	if dataUser == nil {
+		id, err = UserModel.Api_insert(mail, mail, passmd5)
 		if err != nil {
 			RET.Fail(c, 500, nil, err)
 			return
 		}
-		RET.Success(c, 0, map[string]any{
-			"token": token,
-			"uid":   id,
-		}, "注册成功")
+	} else {
+		if dataUser["password"] != passmd5 {
+			RET.Fail(c, 400, nil, "密码错误，账号已被注册，你可以通过对应的邮箱再次找回")
+			return
+		}
 	}
+	err = TokenModel.Api_insert(id, token, "default")
+	if err != nil {
+		RET.Fail(c, 500, nil, err)
+		return
+	}
+	RET.Success(c, 0, map[string]any{
+		"token": token,
+		"uid":   id,
+	}, "注册成功")
 }
