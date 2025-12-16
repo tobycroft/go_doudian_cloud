@@ -39,7 +39,7 @@ func Api_delete_byType(uid, Type interface{}) bool {
 	}
 }
 
-func Api_insert(uid, token, Type interface{}) bool {
+func Api_insert(uid, token, Type interface{}) error {
 	db := tuuz.Db().Table(table)
 	data := map[string]interface{}{
 		"uid":   uid,
@@ -48,12 +48,8 @@ func Api_insert(uid, token, Type interface{}) bool {
 	}
 	db.Data(data)
 	_, err := db.Insert()
-	if err != nil {
-		Log.DBrrsql(err, db, tuuz.FUNCTION_ALL())
-		return false
-	} else {
-		return true
-	}
+	Log.DBrrsql(err, db, tuuz.FUNCTION_ALL())
+	return err
 }
 
 func Api_find(uid, token interface{}) gorose.Data {
