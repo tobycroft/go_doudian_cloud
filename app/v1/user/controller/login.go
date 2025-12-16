@@ -48,7 +48,7 @@ func login_auto(c *gin.Context) {
 	}
 
 	if !app_conf.TestMode {
-		ident, ok := Input.Post("ident", c, false)
+		ident, ok := Input.Post("captcha", c, false)
 		if !ok {
 			return
 		}
