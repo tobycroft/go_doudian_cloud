@@ -121,7 +121,44 @@ func Ws_succ2(typ string, route string, code interface{}, data interface{}, echo
 		data = []interface{}{}
 	}
 	if echo == nil {
-		echo = "错误，后续将补充此条错误的详细信息"
+		switch code {
+
+		case 0:
+			echo = "成功"
+			break
+
+		case -1:
+			echo = "登录失效请重新登录"
+			break
+
+		case 400:
+			echo = "参数错误"
+			break
+
+		case 401:
+			echo = "鉴权失败"
+			break
+
+		case 403:
+			echo = "权限不足"
+			break
+
+		case 406, 407:
+			echo = "数据不符合期待"
+			break
+
+		case 404:
+			echo = "未找到数据"
+			break
+
+		case 500:
+			echo = "数据库错误"
+			break
+
+		default:
+			echo = "失败"
+			break
+		}
 	}
 	ret["type"] = typ
 	ret["route"] = route
