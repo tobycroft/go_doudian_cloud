@@ -45,12 +45,17 @@ func MainWsRouter() {
 			}
 			loginData := TokenModel.Api_find(uid, token)
 			if len(loginData) > 0 {
-				Net.WsServer_WriteChannel <- Net.WsData{Conn: c.Conn, Message: []byte(RET.Ws_succ("login", 0, nil, nil))}
+				Net.WsServer_WriteChannel <- Net.WsData{Conn: c.Conn, Message: RET.Ws_succ("login", 0, nil, "登录成功，插件开始运作")}
+				Net.WsServer_WriteChannel <- Net.WsData{Conn: c.Conn, Message: RET.Ws_succ("ping", 0, nil, nil)}
 				break
 			} else {
-				Net.WsServer_WriteChannel <- Net.WsData{Conn: c.Conn, Message: []byte(RET.Ws_fail("login", 401, nil, "登录失败，抖店助手暂未登录，你可以重新登录后再使用"))}
+				Net.WsServer_WriteChannel <- Net.WsData{Conn: c.Conn, Message: RET.Ws_fail("login", 401, nil, "登录失败，抖店助手暂未登录，你可以重新登录后再使用")}
 				break
 			}
+
+		case "ping", "pong":
+			Net.WsServer_WriteChannel <- Net.WsData{Conn: c.Conn, Message: RET.Ws_succ("ping", 0, nil, nil)}
+			break
 
 		default:
 			Net.WsServer_WriteChannel <- c
