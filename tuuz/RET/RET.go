@@ -2,10 +2,12 @@ package RET
 
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/bytedance/sonic"
 	"github.com/gin-gonic/gin"
 	"main.go/config/app_conf"
 	"main.go/tuuz/Jsong"
-	"net/http"
 )
 
 func Json(data interface{}) string {
@@ -109,37 +111,32 @@ func Ret_fail(code int, data, echo interface{}) (int, map[string]interface{}) {
 	return Ret_succ(code, data, echo)
 }
 
-func Ws_succ(typ string, code interface{}, data interface{}, echo interface{}) string {
-	ret := make(map[string]interface{})
-	ret["type"] = typ
-	ret["code"] = code
-	ret["data"] = data
-	ret["echo"] = echo
-	jb, err := Jsong.Encode(ret)
-	//fmt.Println(jb)
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-	return string(jb)
+func Ws_succ(typ string, code interface{}, data interface{}, echo interface{}) []byte {
+	return Ws_succ2(typ, typ, code, data, echo)
 }
 
-func Ws_succ2(typ string, route string, code interface{}, data interface{}, echo interface{}) string {
+func Ws_succ2(typ string, route string, code interface{}, data interface{}, echo interface{}) []byte {
 	ret := make(map[string]interface{})
+	if data == nil {
+		data = []interface{}{}
+	}
+	if echo == nil {
+		echo = "错误，后续将补充此条错误的详细信息"
+	}
 	ret["type"] = typ
 	ret["route"] = route
 	ret["code"] = code
 	ret["data"] = data
 	ret["echo"] = echo
-	jb, err := Jsong.Encode(ret)
-	//fmt.Println(jb)
+
+	jb, err := sonic.Marshal(ret)
 	if err != nil {
 		fmt.Println(err)
-		return ""
+		return nil
 	}
-	return string(jb)
+	return jb
 }
 
-func Ws_fail(typ string, code interface{}, data interface{}, echo interface{}) string {
+func Ws_fail(typ string, code interface{}, data interface{}, echo interface{}) []byte {
 	return Ws_succ(typ, code, data, echo)
 }
