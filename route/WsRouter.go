@@ -2,6 +2,7 @@ package route
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/bytedance/sonic"
 	Net "github.com/tobycroft/TuuzNet"
@@ -10,9 +11,19 @@ import (
 	"main.go/tuuz/RET"
 )
 
+var Addr2Uid sync.Map
+var Uid2Addr sync.Map
+
 func MainWsRouter() {
 	for c := range Net.WsServer_ReadChannel {
-		fmt.Println(c.Conn.RemoteAddr().String(), string(c.Message), c.Status)
+		addr := c.Conn.RemoteAddr().String()
+		fmt.Println(addr, string(c.Message), c.Status)
+		if !c.Status {
+			userid, ok := Addr2Uid.LoadAndDelete(addr)
+			if ok {
+				Uid2Addr.Delete(userid)
+			}
+		}
 		nd, err := sonic.Get(c.Message, "route")
 		if err != nil {
 			continue
@@ -45,6 +56,8 @@ func MainWsRouter() {
 			}
 			loginData := TokenModel.Api_find(uid, token)
 			if len(loginData) > 0 {
+				Addr2Uid.Store(uid, addr)
+				Uid2Addr.Store(addr, uid)
 				Net.WsServer_WriteChannel <- Net.WsData{Conn: c.Conn, Message: RET.Ws_succ("login", 0, nil, "登录成功，插件开始运作")}
 				Net.WsServer_WriteChannel <- Net.WsData{Conn: c.Conn, Message: RET.Ws_succ("ping", 0, nil, nil)}
 				break
