@@ -7,6 +7,7 @@ import (
 	"github.com/bytedance/sonic"
 	Net "github.com/tobycroft/TuuzNet"
 	"main.go/common/BaseModel/TokenModel"
+	"main.go/config/app_conf"
 	"main.go/tuuz"
 	"main.go/tuuz/RET"
 )
@@ -17,7 +18,9 @@ var Uid2Addr sync.Map
 func MainWsRouter() {
 	for c := range Net.WsServer_ReadChannel {
 		addr := c.Conn.RemoteAddr().String()
-		fmt.Println(addr, string(c.Message), c.Status)
+		if app_conf.TestMode {
+			fmt.Println(addr, string(c.Message), c.Status)
+		}
 		if !c.Status {
 			userid, ok := Addr2Uid.LoadAndDelete(addr)
 			if ok {
