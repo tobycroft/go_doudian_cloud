@@ -22,6 +22,7 @@ func MainWsRouter() {
 			fmt.Println(addr, string(c.Message), c.Status)
 		}
 		if !c.Status {
+			//if status is false that means the user is somehow disconnect with the server, so just delete them
 			userid, ok := Addr2Uid.LoadAndDelete(addr)
 			if ok {
 				Uid2Addr.Delete(userid)
